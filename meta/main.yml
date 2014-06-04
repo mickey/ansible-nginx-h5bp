@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: "Michael Bensoussan"
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+   - name: Ubuntu
+     versions:
+      - precise
+      - quantal
+      - raring
+      - saucy
+      - trusty
+  categories:
+   - web
+dependencies: []

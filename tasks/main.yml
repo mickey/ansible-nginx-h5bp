@@ -1,0 +1,31 @@
+---
+
+- name: Install the nginx packages
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - nginx
+
+- name: Create the default nginx error log directory
+  file: path=/usr/share/nginx/logs/ state=directory
+
+- name: Delete the default configuration
+  command: mv /etc/nginx /etc/nginx-install-backup creates=/etc/nginx-install-backup
+
+- name: Copy the nginx configurations
+  copy: src=h5bp-server-configs-nginx/ dest=/etc/nginx/
+
+- name: Copy the nginx upstart script
+  copy: src=nginx.conf dest=/etc/init/
+
+- name: Create the sites-enabled directory
+  file: path=/etc/nginx/sites-enabled state=directory
+
+- name: Create the link for site enabled specific configurations
+  file: path=/etc/nginx/sites-enabled/{{ item | basename }} state=link src=/etc/nginx/sites-available/{{ item | basename }}
+  with_fileglob:
+    - h5bp-server-configs-nginx/sites-available/*
+  notify:
+    - reload nginx
+
+- name: start the nginx service
+  service: name=nginx state=started enabled=yes
